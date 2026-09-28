@@ -4,9 +4,6 @@ class MemoryStore:
     Will hold conversation history, embeddings, or retrieved context
     as the agent grows. Currently empty on purpose.
     """
-    pass
-
-class MemoryStore:
     def __repr__(self):
         return "MemoryStore(empty — placeholder)"
 
