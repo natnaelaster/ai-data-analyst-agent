@@ -1,0 +1,4 @@
+dataset quality report
+==============================
+null rate: 0.24%
+clean column: 12 / 15
