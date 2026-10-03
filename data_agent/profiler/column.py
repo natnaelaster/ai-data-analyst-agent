@@ -66,10 +66,4 @@ class CategoricalColumn(ColumnProfile):
         return f"{self.name} [{self.dtype}] — {self.null_rate:.1%} null | cardinality = {self.cardinality}"       
     
 if __name__ == "__main__":
-    print(ColumnProfile('data', 'int64', 4, 10))
-    
-with open('score.txt', 'w') as f:
-    f.write('Alice 95\n')
-    f.write('koke 44\n')
-    f.write('yoyo 90\n')
-    f.write('naty 90\n') 
+    print(ColumnProfile('data', 'int64', 4, 10))    
