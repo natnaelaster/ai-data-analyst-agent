@@ -13,7 +13,7 @@ class ColumnProfile:
                 column_name = name,
                 bad_value = name
             )
-        if total_count <= 0:
+        if total_count < 0:
             raise InvalidColumnError(
                 "total_count must be > 0",
                 column_name = name,
