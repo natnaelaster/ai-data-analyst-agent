@@ -1,11 +1,38 @@
+import pandas as pd
 from data_agent.utils.validators import validate_null_count
+from data_agent.utils import DataAgentError, ProfileNotFoundError, InvalidColumnError, ProfilerError
 
-CLEAN_THERSHOLD = 0.05
+# CLEAN_THERSHOLD = 0.05
 
 class ColumnProfile:
 
     def __init__(self, name: str, dtype: str, null_count: int, total_count:int):
-        validate_null_count(null_count, total_count)
+        if not isinstance(name, str) or not name.strip():
+            raise InvalidColumnError (
+                "name must be non-empty string",
+                column_name = name,
+                bad_value = name
+            )
+        if total_count <= 0:
+            raise InvalidColumnError(
+                "total_count must be > 0",
+                column_name = name,
+                bad_value = total_count
+            )
+        if null_count < 0:
+            raise InvalidColumnError(
+                "null_count must be >= 0",
+                column_name = name,
+                bad_value = null_count
+            )
+        if null_count > total_count:
+            raise InvalidColumnError(
+                "null_count cannot exceed total_count",
+                column_name = name,
+                bad_value = null_count
+            )
+        # commented[validate_null_count(null_count, total_count)] cause exception hadler catches the mistakes
+        # validate_null_count(null_count, total_count)
         self.name = name
         self.dtype = dtype
         self.null_count = null_count

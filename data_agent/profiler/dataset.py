@@ -1,5 +1,11 @@
+if __package__ in (None, ""):
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+
+import sys
+from pathlib import Path
 import pandas as pd
-from .column import ColumnProfile
+from data_agent.profiler import ColumnProfile, NumericColumn, CategoricalColumn
+from data_agent.utils import DataAgentError, ProfileNotFoundError
 
 class DatasetProfile:
 
@@ -83,7 +89,10 @@ class DatasetProfile:
         for col in self._columns:          # _columns, not col_profiles
             if col.name == name:
                 return col
-        raise KeyError(f"Column {name!r} not found")
+        raise ProfileNotFoundError(
+            f"no column named {name!r}", 
+            column_name = name
+            )
     
 def run_demo():
     #import pandas as pd

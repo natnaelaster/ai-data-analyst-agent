@@ -1,5 +1,4 @@
 from .column import ColumnProfile, CategoricalColumn, NumericColumn
-from .dataset import DatasetProfile
 
 __all__ = [
     "ColumnProfile",
@@ -7,3 +6,10 @@ __all__ = [
     "NumericColumn",
     "DatasetProfile",
 ]
+
+
+def __getattr__(name: str):
+    if name == "DatasetProfile":
+        from .dataset import DatasetProfile
+        return DatasetProfile
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
