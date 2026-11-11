@@ -1,11 +1,10 @@
-if __package__ in (None, ""):
-    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
-
 import sys
 from pathlib import Path
+import time
 import pandas as pd
 from data_agent.profiler import ColumnProfile, NumericColumn, CategoricalColumn
-from data_agent.utils import DataAgentError, ProfileNotFoundError
+from data_agent.utils import DataAgentError, ProfileNotFoundError, timed
+
 
 class DatasetProfile:
 
@@ -39,6 +38,7 @@ class DatasetProfile:
         print('=' * 50 + '\n')     
 
     @classmethod
+    @timed
     def from_dataframe(cls, df: pd.DataFrame) -> 'DatasetProfile':
         profile = cls()
         for col_name in df.columns:
@@ -93,12 +93,24 @@ class DatasetProfile:
             f"no column named {name!r}", 
             column_name = name
             )
-    
+    """Comprehensive property to get a dictionary of column names and their null rates."""   
+    @property
+    def null_rates(self):
+        return {col.name: col.null_rate for col in self._columns}
+
+    @property
+    def dirty_columns(self):
+        return [col.name for col in self._columns if not col.is_clean]
+
 def run_demo():
     #import pandas as pd
     df = pd.DataFrame({'revenue': [100, 200, None], 'country': ['ET', 'US', 'ET']})
     profile = DatasetProfile.from_dataframe(df)
-    profile.quality_report()                                     
-    
+    profile.quality_report()  
+    print(f"Null rates: {profile.null_rates}")                                   
+    print(f"Dirty columns: {profile.dirty_columns}")
+
 if __name__ == "__main__":
     run_demo()
+
+    
