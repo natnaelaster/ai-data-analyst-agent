@@ -3,7 +3,7 @@ from pathlib import Path
 import time
 import pandas as pd
 from data_agent.profiler import ColumnProfile, NumericColumn, CategoricalColumn
-from data_agent.utils import DataAgentError, ProfileNotFoundError, timed
+from data_agent.utils import DataAgentError, ProfileNotFoundError, timed, is_valid_column_name, validate_null_count
 
 
 class DatasetProfile:
@@ -113,4 +113,6 @@ def run_demo():
 if __name__ == "__main__":
     run_demo()
 
+    
+    
     

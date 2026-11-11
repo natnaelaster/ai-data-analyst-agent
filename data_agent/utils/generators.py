@@ -10,7 +10,7 @@ def iter_rows(path):
 def batched(iterable, size):
     """Yield successive batches of a given size from an iterable."""
     if size <1:
-        raise ValueError("size must be >= 1, got {size}")
+        raise ValueError(f"size must be >= 1, got {size}")
     
     batch = []
     for item in iterable:

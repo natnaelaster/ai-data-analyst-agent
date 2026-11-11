@@ -35,13 +35,9 @@ if __name__ == "__main__":
         time.sleep(1)
         return "Function completed"
     
-    calls = {"n":0}
-    @retry(times=4)
+    @retry(times=3)
     def unreliable_function():
-        calls["n"] += 1
-        if calls["n"] < 3:
-            raise ConnectionError("Simulated connection error")
-        return "Success on attempt 3"
+        raise ConnectionError("Simulated connection error")
     
     # Test the timed decorator
     result = test_function()
