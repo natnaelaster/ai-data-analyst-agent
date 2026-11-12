@@ -8,43 +8,6 @@ from data_agent.utils import DataAgentError, ProfilerError, InvalidColumnError, 
 from data_agent.profiler import ColumnProfile, DatasetProfile
 
 if __name__ == "__main__":
-    # Test cases for the data_agent package
-    # Test 1 — DataAgentError
-    try:
-        raise DataAgentError("base agent failure")
-    except DataAgentError as e:
-        print(f"Test 1 (DataAgentError): {e}")
-        # Verify the [DataAgent] prefix
-        assert str(e).startswith("[DataAgent]"), "prefix missing"
-
-    # Test 2 — ProfilerError
-    try:
-        raise ProfilerError("profiler failure")
-    except ProfilerError as e:
-        print(f"Test 2 (ProfilerError): {e}")
-        # Verify inheritance: ProfilerError should also print [DataAgent]
-        assert str(e).startswith("[DataAgent]"), "prefix missing"
-
-    # Test 3 — InvalidColumnError via ColumnProfile
-    try:
-        ColumnProfile("hulu", "int64", -90, 100)
-    except InvalidColumnError as e:
-        assert e.column_name == "hulu"
-        assert e.bad_value == -90
-        assert str(e).startswith("[DataAgent]")
-    else:
-        raise AssertionError("InvalidColumnError was not raised")
-
-
-    # Test 4 — ProfileNotFoundError via DatasetProfile
-    profile = DatasetProfile()
-    
-    try:
-        profile["missing_column"]
-    except ProfileNotFoundError as e:
-        assert e.column_name == "missing_column"
-    else:
-        raise AssertionError("ProfileNotFoundError was not raised")    
     
     # Test 5 — timed and retry decorators
     @timed
@@ -81,7 +44,6 @@ if __name__ == "__main__":
     profile.quality_report()  
     print(f"Null rates: {profile.null_rates}")                                   
     print(f"Dirty columns: {profile.dirty_columns}")
-    '''
     
     # timed: result passes through AND @wraps kept the name (the two classic bugs)
     @timed

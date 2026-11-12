@@ -28,3 +28,21 @@ class ProfileNotFoundError(ProfilerError):
         Base = super().__str__()
         return f"{Base} | column={self.column_name!r}"
     
+class DataNotLoadedError(DataAgentError):
+    """Raised when data is not loaded before profiling."""
+    def __init__(self, message:str):
+        super().__init__(message)
+        
+    def __str__(self):
+        Base = super().__str__()
+        return f"{Base} | data not loaded"
+    
+class MemoryNotFoundError(DataAgentError):
+    """Raised when memory is not found"""
+    def __init__(self, message:str, key:str):
+        super().__init__(message)
+        self.key = key
+
+    def __str__(self):
+        Base = super().__str__()
+        return f"{Base} | key={self.key!r}"

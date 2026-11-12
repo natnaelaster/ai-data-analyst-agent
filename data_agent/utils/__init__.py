@@ -3,6 +3,8 @@ from .exceptions import (
     ProfilerError,
     InvalidColumnError,
     ProfileNotFoundError,
+    DataNotLoadedError,
+    MemoryNotFoundError
 )
 from .decorators import timed, retry
 from .generators import iter_rows, batched
@@ -13,6 +15,8 @@ __all__ = [
     "ProfilerError",
     "InvalidColumnError",
     "ProfileNotFoundError",
+    "DataNotLoadedError",
+    "MemoryNotFoundError",
     "timed",
     "retry",
     "iter_rows",
