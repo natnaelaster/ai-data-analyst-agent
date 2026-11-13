@@ -53,7 +53,7 @@ class DatasetProfile:
                     mean=round(float(series.mean()), 2),
                     std=round(float(series.std()), 2),
                 )
-            elif series.dtype in ('object', 'category'):
+            elif pd.api.types.is_string_dtype(series) or isinstance(series.dtype, pd.CategoricalDtype):   # new
                 col = CategoricalColumn(
                     name=col_name,
                     dtype=str(series.dtype),

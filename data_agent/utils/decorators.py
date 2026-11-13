@@ -29,22 +29,3 @@ def retry(times):
         return wrapper
     return decorator
 
-if __name__ == "__main__":
-    @timed
-    def test_function():
-        time.sleep(1)
-        return "Function completed"
-    
-    @retry(times=3)
-    def unreliable_function():
-        raise ConnectionError("Simulated connection error")
-    
-    # Test the timed decorator
-    result = test_function()
-    print(result)
-
-    # Test the retry decorator
-    try:
-        unreliable_function()
-    except ConnectionError as e:
-        print(f"Final error: {e}")

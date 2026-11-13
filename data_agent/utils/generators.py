@@ -20,14 +20,5 @@ def batched(iterable, size):
             batch = []
     if batch:
         yield batch
-        
-if __name__ == "__main__":
-    # Example usage of iter_rows
-    for row in iter_rows("output.csv"):
-        print(row)
-    
-    # Example usage of batched
-    data = range(3)
-    for batch in batched(data, 0):
-        print(batch)
+
         
