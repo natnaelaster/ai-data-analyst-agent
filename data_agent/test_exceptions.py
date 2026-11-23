@@ -3,36 +3,44 @@ from data_agent.utils import DataAgentError, ProfilerError, InvalidColumnError, 
 from data_agent.profiler import ColumnProfile, DatasetProfile
 from data_agent.utils import timed, retry
 from data_agent.utils import iter_rows, batched
+import pytest
 
-if __name__ == "__main__":
-    # Test cases for the data_agent package
-    # Test 1 — DataAgentError
-    try:
+# Test cases for the data_agent package
+# Test 1 — DataAgentError
+def test_data_agent_error():
+    with pytest.raises(DataAgentError) as exc_info: # don't forgate the you are using "exc_info" instead of "e", cause it should attach ".value" for holds metadata wrapping.
         raise DataAgentError("base agent failure")
-    except DataAgentError as e:
-        print(f"Test 1 (DataAgentError): {e}")
-        # Verify the [DataAgent] prefix
-        assert str(e).startswith("[DataAgent]"), "prefix missing"
+    
+    print(f"Test 1 (DataAgentError): {exc_info.value}")
+    assert str(exc_info.value).startswith("[DataAgent]"), "prefix missing"
+    
+def test_profiler_error():
+    with pytest.raises(ProfilerError) as exc_info:
+        raise ProfilerError("profile failure")
+    
+    print(f"Test 2 (ProfilerError): {exc_info.value}")
+    # Verify inheritance: ProfilerError should also print [DataAgent]
+    assert str(exc_info.value).startswith("[DataAgent]"), "prefix missing"
 
-    # Test 2 — ProfilerError
-    try:
-        raise ProfilerError("profiler failure")
-    except ProfilerError as e:
-        print(f"Test 2 (ProfilerError): {e}")
-        # Verify inheritance: ProfilerError should also print [DataAgent]
-        assert str(e).startswith("[DataAgent]"), "prefix missing"
-
-    # Test 3 — InvalidColumnError via ColumnProfile
-    try:
+# Test 3 — InvalidColumnError via ColumnProfile
+def test_invalid_column_profile():
+    with pytest.raises(InvalidColumnError) as exc_info:
         ColumnProfile("hulu", "int64", -90, 100)
-    except InvalidColumnError as e:
-        assert e.column_name == "hulu"
-        assert e.bad_value == -90
-        assert str(e).startswith("[DataAgent]")
-    else:
-        raise AssertionError("InvalidColumnError was not raised")
 
+    assert exc_info.value.column_name == "hulu"
+    assert exc_info.value.bad_value == -90
+    assert str(exc_info.value).startswith("[DataAgent]")
 
+# Test 4 — ProfileNotFoundError via DatasetProfile
+profile = DatasetProfile()
+
+def test_profile_missing():
+    with pytest.raises(ProfileNotFoundError) as exc_info:
+        profile ["missing column"]
+    
+    assert exc_info.value.column_name == "missing column"
+    
+if __name__ == "__main__":
     # Test 4 — ProfileNotFoundError via DatasetProfile
     profile = DatasetProfile()
     
