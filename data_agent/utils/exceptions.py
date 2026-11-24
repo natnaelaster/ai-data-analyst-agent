@@ -1,6 +1,5 @@
 """Custom exceptions for the data_agent package."""
 
-
 class DataAgentError(Exception):
     """Base for all errors in the data_agent package."""
 

@@ -38,7 +38,7 @@ class DatasetProfile:
         print('=' * 50 + '\n')     
 
     @classmethod
-    @timed
+    @timed # wrapping the func with timed day_6(decorator)
     def from_dataframe(cls, df: pd.DataFrame) -> 'DatasetProfile':
         profile = cls()
         for col_name in df.columns:
