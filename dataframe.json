@@ -1,0 +1,20 @@
+[
+  {
+    "name": "revenue",
+    "dtype": "float64",
+    "null_count": 1,
+    "total_count": 3,
+    "null_rate": 0.3333333333333333,
+    "is_clean": false,
+    "type": "NumericColumn"
+  },
+  {
+    "name": "country",
+    "dtype": "str",
+    "null_count": 0,
+    "total_count": 3,
+    "null_rate": 0.0,
+    "is_clean": true,
+    "type": "CategoricalColumn"
+  }
+]

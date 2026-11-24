@@ -1,15 +1,22 @@
-import sys
-from pathlib import Path
-import time
+import json
+import csv
 import pandas as pd
-from data_agent.profiler import ColumnProfile, NumericColumn, CategoricalColumn
-from data_agent.utils import DataAgentError, ProfileNotFoundError, timed, is_valid_column_name, validate_null_count
+from pathlib import Path
+from ..structures import DynamicArray
+from .column import ColumnProfile, NumericColumn, CategoricalColumn
+from ..utils import DataAgentError, ProfileNotFoundError, timed, is_valid_column_name, validate_null_count
 
-
+class AgentEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, np.floating):
+            return float(obj)
+        if isinstance(obj, np.integer):
+            return int(obj)
+        return super().default(obj)
 class DatasetProfile:
 
     def __init__(self):
-        self._columns: list[ColumnProfile] = []
+        self._columns = DynamicArray()
 
     def add_column(self, col_profile: ColumnProfile) -> None:
         self._columns.append(col_profile)
@@ -93,6 +100,58 @@ class DatasetProfile:
             f"no column named {name!r}", 
             column_name = name
             )
+        
+    def to_json(self, path:Path) -> None:
+        """Write the profile as a JSON file"""
+        entries = []
+        for col in self:
+            entry = {
+                'name': col.name,
+                'dtype': col.dtype,
+                'null_count': col.null_count,
+                'total_count': col.total_count,
+                'null_rate': float(col.null_rate),
+                'is_clean': bool(col.is_clean),
+                'type': col.__class__.__name__,
+            }
+            entries.append(entry) 
+            
+        with open(path, 'w') as f:
+            json.dump(entries, f, indent=2, cls= AgentEncoder)
+    
+    @classmethod
+    def from_json(cls, path:Path) -> "DatasetProfile":
+        """Build a DatasetProfile from a JSON file"""
+        with open(path, 'r') as f:
+            entries = json.load(f)
+        
+        profile = cls()
+        for entry in entries:
+            col = ColumnProfile(
+                entry['name'],
+                entry['dtype'],
+                null_count=0,
+                total_count=1,
+            )   
+        return profile
+    
+    def to_csv(self, path: Path) -> None:
+        """Write the profile as a CSV quality report."""
+        fieldnames = ["name", "dtype", "null_rate", "is_clean", "type"]
+        
+        with open(path, 'w') as f:
+            write = csv.DictWriter(f, fieldnames=fieldnames)
+            write.writeheader()
+            
+            for col in self:
+                write.writerow({
+                    'name': col.name,
+                    'dtype': col.dtype,
+                    'null_rate': col.null_rate,
+                    'is_clean': col.is_clean,
+                    'type': col.__class__.__name__,
+                })
+        
     """Comprehensive property to get a dictionary of column names and their null rates."""   
     @property
     def null_rates(self):
@@ -107,6 +166,8 @@ def run_demo():
     df = pd.DataFrame({'revenue': [100, 200, None], 'country': ['ET', 'US', 'ET']})
     profile = DatasetProfile.from_dataframe(df)
     profile.quality_report()  
+    profile.to_csv("dataframe.csv")
+    profile.to_json("dataframe.json")
     print(f"Null rates: {profile.null_rates}")                                   
     print(f"Dirty columns: {profile.dirty_columns}")
 
